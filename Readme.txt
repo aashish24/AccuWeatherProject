@@ -21,8 +21,10 @@ I created a responsive single page c# MVC site.
 The applications single view displays the current weather conditions, a 24 hour forecast, and a chart using the 24 hour forecast values for the requested location.
 
 
-1. When the site starts the clients public ip address is detected using the site http://checkip.dyndns.org.  If this fails, a default public ip address is used from the State College area.
-2. The application then uses the public ip address to get a geographic location of City and State using http://freegeoip.net.
+1. When the site first starts the clients public ip address is detected using the site http://checkip.dyndns.org.  If this fails, a default public ip address is used from the State College area.
+
+2. The application then uses the public ip address to get a geographic location of City and State using http://freegeoip.net. When the client searches using the search input, the application uses only the AccuWeather api to get the location key.
+
 3. The application uses the AccuWeather api(s) to 
 	a. Retrieve a location Key from the State and City returned from freegeoip.net. 
 	b. Retrieve current conditions.
