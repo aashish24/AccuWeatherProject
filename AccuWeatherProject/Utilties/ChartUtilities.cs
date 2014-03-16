@@ -13,11 +13,11 @@ namespace AccuWeatherProject.Utilties
         /// <summary>
         /// These methods help make the chart
         /// </summary>
-        /// <param name="datapoints"></param>
+        /// <param name="TempPoints"></param>
         /// <param name="chartType"></param>
         /// <param name="ChartTitle"></param>
         /// <returns></returns>
-        public static Chart CreateChart(Dictionary<string, int> datapoints, SeriesChartType chartType, string ChartTitle)
+        public static Chart CreateChart(Dictionary<string, int> TempPoints, Dictionary<string, int> PrecipPoints, SeriesChartType chartType, string ChartTitle)
         {
             Chart chart = new Chart();
             chart.Width = 900;
@@ -35,7 +35,8 @@ namespace AccuWeatherProject.Utilties
             chart.TextAntiAliasingQuality = TextAntiAliasingQuality.Normal;
             chart.Titles.Add(CreateTitle(ChartTitle));
             chart.Legends.Add(CreateLegend());
-            chart.Series.Add(CreateSeries(datapoints, chartType));
+            chart.Series.Add(CreateSeries(TempPoints, chartType, "Temperatures", Color.Red, true));
+            chart.Series.Add(CreateSeries(PrecipPoints, SeriesChartType.Line, "Precipitation Probability", Color.Blue, false));
             chart.ChartAreas.Add(CreateChartArea());
             return chart;
         }
@@ -49,14 +50,14 @@ namespace AccuWeatherProject.Utilties
             title.ForeColor = Color.FromArgb(26, 59, 105);
             return title;
         }
-        private static Series CreateSeries(Dictionary<string, int> datapoints, SeriesChartType chartType)
+        private static Series CreateSeries(Dictionary<string, int> datapoints, SeriesChartType chartType, string seriesName, Color color, bool ShowLabel)
         {
             Series seriesDetail = new Series();
-            seriesDetail.Name = "Degrees";
+            seriesDetail.Name = seriesName;
             seriesDetail.IsValueShownAsLabel = false;
-            seriesDetail.Color = Color.FromArgb(198, 99, 99);
+            seriesDetail.Color = color;
             seriesDetail.ChartType = chartType;
-            seriesDetail.IsValueShownAsLabel = true;
+            seriesDetail.IsValueShownAsLabel = ShowLabel;
             seriesDetail.BorderWidth = 2;
             foreach (KeyValuePair<string, int> kvp in datapoints)
             {

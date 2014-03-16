@@ -16,6 +16,10 @@ namespace BootstrapMvcSample.Controllers
     public class HomeController : BootstrapBaseController
     {
         private PageViewModel model;
+
+
+        #region ControllerActions
+
         /// <summary>
         /// This is the start of the web app, it takes the current IP address and attempt to find a location, then display AccuWeather.
         /// </summary>
@@ -57,10 +61,10 @@ namespace BootstrapMvcSample.Controllers
                 {
                     success = true,
                     Message = "Found weather for " + location,
-                    LocationText = location,                   
+                    LocationText = location,
                     PV_24HourForecast = RenderPartialViewToString("_24HourForecast", model),
                     PV_Chart = RenderPartialViewToString("_Chart", model),
-                    PV_CurrentConditions = RenderPartialViewToString("_CurrentConditions", model)                   
+                    PV_CurrentConditions = RenderPartialViewToString("_CurrentConditions", model)
                 });
             }
             else
@@ -136,7 +140,7 @@ namespace BootstrapMvcSample.Controllers
                 if (model.location != null)
                 {
                     //use accuweather API to get current conditions and add to model
-                    model.currentConditions = HelpMethods.AccuWeatherCurrentConditionsRequestinJson(model.location.Key);                  
+                    model.currentConditions = HelpMethods.AccuWeatherCurrentConditionsRequestinJson(model.location.Key);
                     //use accuweather API to get 24 hour forecast
                     hourlyforecast = HelpMethods.AccuWeather24HourlyForecastRequestinJson(model.location.Key);
                     //add 24 hour forecast to model
@@ -157,9 +161,16 @@ namespace BootstrapMvcSample.Controllers
             return View();
         }
 
+        #endregion
 
         #region Chart
 
+              
+        /// <summary>
+        /// Create Chart with temperature and Pecipitation
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [AcceptVerbs(HttpVerbs.Get)]
         [ValidateInput(false)]
@@ -167,11 +178,13 @@ namespace BootstrapMvcSample.Controllers
         {
             PageViewModel pvm = HelpMethods.GetSessionObject();
             Dictionary<string, int> datapoints = new Dictionary<string, int>();
+            Dictionary<string, int> precippoints = new Dictionary<string, int>();
             try
             {
                 foreach (var item in pvm.hourlyForecast)
                 {
                     datapoints.Add(item.Hour, Convert.ToInt16(item.Temperature.Value));
+                    precippoints.Add(item.Hour, Convert.ToInt16(item.PrecipitationProbability));
                 }
             }
             catch (Exception ex)
@@ -179,7 +192,7 @@ namespace BootstrapMvcSample.Controllers
                 string XXX = ex.ToString();
             }
             // Build Chart 
-            var chart = ChartUtilities.CreateChart(datapoints, SeriesChartType.Line, "24 Hour Forecast Temperatures");
+            var chart = ChartUtilities.CreateChart(datapoints, precippoints, SeriesChartType.Line, "24 Hour Forecast Temperatures");
             // Return chart object, wrapped in our custom action result
             ChartActionResult newChart = new ChartActionResult(chart);
 
