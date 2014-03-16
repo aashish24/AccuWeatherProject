@@ -174,14 +174,16 @@ namespace BootstrapMvcSample.Controllers
         [HttpGet]
         [AcceptVerbs(HttpVerbs.Get)]
         [ValidateInput(false)]
-        public ActionResult MyChart(int? id)
-        {
-            PageViewModel pvm = HelpMethods.GetSessionObject();
+        public ActionResult MyChart(int? id, string key)
+        {            
+            obj_24hourForeCast hourForeCast = new obj_24hourForeCast ();
+            hourForeCast = HelpMethods.AccuWeather24HourlyForecastRequestinJson(key);
+
             Dictionary<string, int> datapoints = new Dictionary<string, int>();
             Dictionary<string, int> precippoints = new Dictionary<string, int>();
             try
             {
-                foreach (var item in pvm.hourlyForecast)
+                foreach (var item in hourForeCast.hourlyForecast)
                 {
                     datapoints.Add(item.Hour, Convert.ToInt16(item.Temperature.Value));
                     precippoints.Add(item.Hour, Convert.ToInt16(item.PrecipitationProbability));
@@ -195,7 +197,6 @@ namespace BootstrapMvcSample.Controllers
             var chart = ChartUtilities.CreateChart(datapoints, precippoints, SeriesChartType.Line, "24 Hour Forecast Temperatures");
             // Return chart object, wrapped in our custom action result
             ChartActionResult newChart = new ChartActionResult(chart);
-
             Session["ChartMap"] = newChart;
             return newChart;
         }
