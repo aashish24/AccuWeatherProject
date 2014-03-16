@@ -1,0 +1,17 @@
+﻿@model AccuWeatherProject.Models.PageViewModel
+
+
+<table id="tbl_24Forecast" class="table table-striped table-hover table-condensed">
+    @foreach (var item in Model.hourlyForecast)
+    {
+        <tr>
+            <td style="width: 10%">@item.DateTime.DayOfWeek.ToString()</td>
+            <td style="width: 10%">@item.Hour</td>
+            <td style="width: 10%"><img src=@item.WeatherIconPath alt="@item.IconPhrase" /></td>
+            <td style="width: 40%">@item.IconPhrase </td>
+            <td style="width: 10%">@item.Temperature.Value.ToString("N0")  @item.Temperature.Unit</td>
+            <td style="width: 20%">@item.PrecipitationProbability %</td>
+        </tr>
+    }
+</table>
+

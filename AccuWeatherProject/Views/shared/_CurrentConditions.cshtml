@@ -1,0 +1,27 @@
+﻿@model AccuWeatherProject.Models.PageViewModel
+
+@{
+    string weathericonSource = "";
+    int Weathericon = Model.currentConditions.WeatherIcon;
+    //"../../Images/01-s.png"
+    if (Weathericon < 10)
+    {
+        weathericonSource = "../../Images/0" + Weathericon + "-s.png";
+    }
+    else
+    {
+        weathericonSource = "../../Images/" + Weathericon + "-s.png";
+    }
+
+    string text = Model.currentConditions.WeatherText + " at " + Model.currentConditions.Temperature.Imperial.Value + Model.currentConditions.Temperature.Imperial.Unit;
+    string locationText = Model.location.LocalizedName + ", " + Model.location.AdministrativeArea.EnglishName + " " + Model.location.Country.EnglishName;
+}
+ <h3 class="myheadercenter"> Currently <img src=@weathericonSource alt="@Model.currentConditions.WeatherText" />@text for @locationText  </h3>
+ 
+   
+
+
+
+
+
+

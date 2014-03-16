@@ -1,0 +1,67 @@
+body {
+    padding-top: 60px;
+    padding-bottom: 40px;  
+}
+
+.tpad {
+    padding-top: 10px;
+}
+.chartpad{
+    padding-top: 30px;
+}
+
+.topBarText {
+    
+    padding: 6px 15px 10px;
+    color: #777;
+    text-decoration: none;
+    text-shadow: 0 1px 0 #fff;
+    font-size: large;
+}
+.TopBar-label {
+    
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffffff;  
+    white-space: nowrap;
+    background-color: #16a7fb;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;  
+   
+}
+.tableHeight {
+    height: 330px;
+    overflow: auto;
+}
+.tableBackColor{
+    background-color:#d7dde1
+}
+#commonMessage {
+    width: 100%;
+    height: 50px;
+    font-size: 24px;
+    line-height: 50px;
+    text-align: center;
+    color: #d93b2b;
+    font-weight: bold;
+    background: #004e66;
+    border-bottom: 1px solid #7f1c08;
+    filter: alpha(opacity=62);
+    -moz-opacity: 0.62;
+    opacity: 0.62;
+    display: none; /* LEAVE THIS IN*/
+}
+.table th, .table td{
+ text-align: center;
+ }
+.myheadercenter {
+ text-align: center;
+ padding-bottom: 2px;
+}
+ul.ui-autocomplete {
+    list-style-type: none;
+}
+
+
+

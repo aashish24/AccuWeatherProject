@@ -1,0 +1,177 @@
+@using System.Web.Optimization
+@using BootstrapSupport
+@using NavigationRoutes
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>@ViewBag.Title - AccuWeather Project - Bill Lock</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="@Styles.Url("~/content/css")" rel="stylesheet"/>
+      <link href="@Styles.Url("~/Content/themes/base/css")" rel="stylesheet"/>
+    @RenderSection("head", required: false)
+    @Html.Partial("_html5shiv")
+    @* favicons and touch icons go here *@
+</head>
+<body>
+    <div class="navbar navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <img class="img-responsive pull-left tpad" src="../../Content/images/accuweather_logotype_color.png" height="55" alt="AccuWeather Logo">
+
+                <form class="navbar-form pull-right ">
+                    <button id="btn_getLocation" class="btn">Check weather for</button>
+                    <input id="LocationInput" type="text" placeholder="City, State or Postalcode" autocomplete="on">
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div id="commonMessage" style="display: none"></div>
+        @RenderBody()
+        <hr>
+        <div class="navbar navbar-fixed-bottom footer">
+            <div class="container">
+                <p class="muted credit">&copy; @DateTime.Now.Year - AccuWeather Project - Bill Lock</p>
+            </div>
+        </div>
+        @*  <footer>
+                 <p class="muted credit">&copy; @DateTime.Now.Year - AccuWeather Project - Bill Lock</p>
+            </footer> *@
+    </div>
+
+    @Scripts.Render("~/js")
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
+<script>
+    $(document).ready(function () {
+
+        //ajax for autocomplete
+        $("#LocationInput").autocomplete({           
+            minLength: 3,
+            autoFill: true,
+            mustMatch: true,  
+            source: function (req, resp) {
+                $.ajax({
+                    url: '@Url.Action("AutoComplete")',
+                    type: "POST",
+                    dataType: "json",
+                    data: { term: req.term },
+                    success: function (data) {
+                        $(".ui-helper-hidden-accessible").hide();
+                        resp($.map(data.Locations, function (item) {                                                    
+                            return { value: item };
+                        }));
+                    }
+                });
+            }
+
+        });
+
+        //setup button actions
+        $('#btn_getLocation').live('click', function () {
+            locationText = $('#LocationInput').val();
+           DisplayFindingMessage('Finding weather for ' + locationText + ', please wait!', 'on');
+            if (locationText != '') {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetNewModelForLocation")',
+                    data: "{'locationInput':'" + locationText + "'}",
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        if (data.Message == 'failed') {
+                            DisplayFindingMessage(' ', 'off');
+                            DisplayCommonMessage('Could not find weather for ' + locationText + ' please try another location', 2000)
+                        }
+                        else {                          
+                            DisplayFindingMessage(' ', 'off');
+                            $('.Chart').html(' ');                         
+                            $("#PV_Chart").html(' ');
+                            $("#PV_Chart").html(data.PV_Chart);
+                            $("#PV_24HourForecast").html(' ');
+                            $("#PV_24HourForecast").html(data.PV_24HourForecast);
+                            $("#PV_CurrentConditions").html(' ');
+                            $("#PV_CurrentConditions").html(data.PV_CurrentConditions);                             
+                        }
+                    },
+                    error: function (error) {
+                        alert("Error: " + error.responseText);
+                    }
+                });
+            }
+            else {
+                DisplayCommonMessage('Please enter a location', 2500);
+            }
+            return false;
+        });
+
+        //when user slects autocomplete selection, simulate search button click
+        //tried to put this bottom code into a js function, but weird things happen.
+        $('.ui-menu-item').live('click', function () {
+            locationText = $('#LocationInput').val();
+            DisplayFindingMessage('Finding weather for ' + locationText + ', please wait!', 'on');
+            if (locationText != '') {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetNewModelForLocation")',
+                    data: "{'locationInput':'" + locationText + "'}",
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        if (data.Message == 'failed') {
+                            DisplayFindingMessage(' ', 'off');
+                            DisplayCommonMessage('Could not find weather for ' + locationText + ' please try another location', 2000)
+                        }
+                        else {
+                            DisplayFindingMessage(' ', 'off');
+                            $('.Chart').html(' ');
+                            $("#PV_Chart").html(' ');
+                            $("#PV_Chart").html(data.PV_Chart);
+                            $("#PV_24HourForecast").html(' ');
+                            $("#PV_24HourForecast").html(data.PV_24HourForecast);
+                            $("#PV_CurrentConditions").html(' ');
+                            $("#PV_CurrentConditions").html(data.PV_CurrentConditions);
+                        }
+                    },
+                    error: function (error) {
+                        alert("Error: " + error.responseText);
+                    }
+                });
+            }
+            else {
+                DisplayCommonMessage('Please enter a location', 2500);
+            }
+            return false;
+        });
+
+
+
+
+
+
+    });
+
+    //display messages to user
+    function DisplayFindingMessage(message, onoff) {
+        if (onoff == 'on') {
+            $("#commonMessage").html('');
+            $('#commonMessage').html(message);
+            $('#commonMessage').delay(400).slideDown(400);
+        }
+        else {
+            $('#commonMessage').slideUp(400);
+        }
+    }
+
+    //display messages to user
+    function DisplayCommonMessage(message, duration) {
+        $("#commonMessage").html('');
+        $('#commonMessage').html(message);
+        $('#commonMessage').delay(400).slideDown(400).delay(duration).slideUp(400);
+    }
+
+</script>
+
